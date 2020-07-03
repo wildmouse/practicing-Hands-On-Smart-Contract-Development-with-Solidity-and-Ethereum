@@ -1,85 +1,79 @@
-
-import React, { useState, useEffect } from "react";
-import FactoryContract from "./contracts/Factory.json";
+import React, { Component } from "react";
+import GreeterContract from "./contracts/Greeter.json";
 import getWeb3 from "./utils/getWeb3";
-import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import { BrowserRouter as Router, Route, Link, NavLink } from "react-router-dom";
-
-import NewFundraiser from './NewFundraiser'
-import Home from './Home'
-import Receipts from './Receipts'
 
 import "./App.css";
 
-const App = () => {
-  const [state, setState] = useState({web3: null, accounts: null, contract: null});
-  const [storageValue, setStorageValue] = useState(0);
+class App extends Component {
+  state = { greeting: '', web3: null, accounts: null, contract: null };
 
-  useEffect(() => {
-    const init = async() => {
-      try {
-        // Get network provider and web3 instance.
-        const web3 = await getWeb3();
+  componentDidMount = async () => {
+    try {
+      // Get network provider and web3 instance.
+      const web3 = await getWeb3();
 
-        // Use web3 to get the user's accounts.
-        const accounts = await web3.eth.getAccounts();
+      // Use web3 to get the user's accounts.
+      const accounts = await web3.eth.getAccounts();
 
-        // Get the contract instance.
-        const networkId = await web3.eth.net.getId();
-        const deployedNetwork = FactoryContract.networks[networkId];
-        const instance = new web3.eth.Contract(
-          FactoryContract.abi,
-          deployedNetwork && deployedNetwork.address,
-        );
+      // Get the contract instance.
+      const networkId = await web3.eth.net.getId();
+      const deployedNetwork = GreeterContract.networks[networkId];
+      const instance = new web3.eth.Contract(
+        GreeterContract.abi,
+        deployedNetwork && deployedNetwork.address,
+      );
 
-        // Set web3, accounts, and contract to the state, and then proceed with an
-        setState({web3, accounts, contract: instance});
-
-      } catch(error) {
-        // Catch any errors for any of the above operations.
-        alert(
-          `Failed to load web3, accounts, or contract. Check console for details.`,
-        );
-        console.error(error);
-      }
+      // Set web3, accounts, and contract to the state, and then proceed with an
+      // example of interacting with the contract's methods.
+      this.setState({ web3, accounts, contract: instance }, this.runExample);
+    } catch (error) {
+      // Catch any errors for any of the above operations.
+      alert(
+        `Failed to load web3, accounts, or contract. Check console for details.`,
+      );
+      console.error(error);
     }
-    init();
-  }, []);
-
-  const useStyles = makeStyles({
-    root: {
-      flexGrow: 1,
-    },
-  });
-
-  const classes = useStyles();
-
-  const runExample = async () => {
-    const { accounts, contract } = state;
   };
 
-  return (
-    <div>
-      <Router>
-        <AppBar position="static" color="default" style={{ margin: 0 }}>
-          <Toolbar>
-           <Typography variant="h6" color="inherit">
-             <NavLink className="nav-link" to="/">Home</NavLink>
-           </Typography>
-           <NavLink className="nav-link" to="/new/">New</NavLink>
-          </Toolbar>
-       </AppBar>
+  runExample = async () => {
+    const { accounts, contract } = this.state;
+    const response = await contract.methods.greet().call()
 
-        <Route path="/" exact component={Home} />
-        <Route path="/new/" component={NewFundraiser} />
-        <Route path="/receipts" component={Receipts} />
-      </Router>
-    </div>
-  )
+    this.setState({ greeting: response });
+  };
+
+  handleGreetingChange = (e) => {
+    const inputVal = e.target.value
+    this.setState({ greeting: inputVal })
+  }
+
+  formSubmitHandler = async () => {
+    const { accounts, contract, greeting } = this.state;
+    const updatedGreeting = await contract.methods.setGreeting(greeting).send({from: accounts[0]});
+  }
+
+  render() {
+    if (!this.state.web3) {
+      return <div>Loading Web3, accounts, and contract...</div>;
+    }
+    return (
+      <div className="App">
+        <h1>Greeter</h1>
+
+        {this.state.greeting}
+
+        <form>
+          <label>
+            New Greeting:
+            <input type="text" value={this.state.greeting} onChange={e => this.handleGreetingChange(e)} />
+          </label>
+        </form>
+
+        <button onClick={this.formSubmitHandler}> Submit </button>
+
+      </div>
+    );
+  }
 }
-
 
 export default App;

@@ -761,9 +761,46 @@
     "name": "solc",
     "version": "0.6.0+commit.26b70077.Emscripten.clang"
   },
-  "networks": {},
+  "networks": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0x321374D4CD736Ce5484BFb3aF59C290639b73eA4",
+      "transactionHash": "0x94cc8f0ca97b2f4de8f1d33c47796d2f95b211e6b0470c2be22d228ad023e85d"
+    },
+    "5": {
+      "events": {},
+      "links": {},
+      "address": "0x321374D4CD736Ce5484BFb3aF59C290639b73eA4",
+      "transactionHash": "0x94cc8f0ca97b2f4de8f1d33c47796d2f95b211e6b0470c2be22d228ad023e85d"
+    },
+    "5777": {
+      "events": {
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x7525b94Cbadd6b68B921c6A5B6BCB7A792186206",
+      "transactionHash": "0x8514075705e5829b43610dca0d52ff8763a5cf4a71e084d5708f7f1133175d04"
+    }
+  },
   "schemaVersion": "3.2.0",
-  "updatedAt": "2020-07-03T00:47:22.069Z",
+  "updatedAt": "2020-07-03T11:32:40.805Z",
   "devdoc": {
     "methods": {
       "owner()": {
