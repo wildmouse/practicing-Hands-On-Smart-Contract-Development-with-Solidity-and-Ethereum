@@ -7,7 +7,7 @@ contract("Fundraiser", accounts => {
   const imageURL = "https://placekitten.com/600/350"
   const description = "Beneficiary description"
   const beneficiary = accounts[1];
-  const custodian = accounts[0];
+  const owner = accounts[0];
 
   describe("initialization", () => {
     beforeEach (async () => {
@@ -17,7 +17,7 @@ contract("Fundraiser", accounts => {
         imageURL,
         description,
         beneficiary,
-        custodian
+        owner
       )
     })
 
@@ -47,8 +47,8 @@ contract("Fundraiser", accounts => {
     })
 
     it ("gets the custodian", async () => {
-      const actual = await fundraiser.custodian()
-      assert.equal(actual, custodian, "custodian should match")
+      const actual = await fundraiser.owner()
+      assert.equal(actual, owner, "owner should match")
     })
   })
 })
