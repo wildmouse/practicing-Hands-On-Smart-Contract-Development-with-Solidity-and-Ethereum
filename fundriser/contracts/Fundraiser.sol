@@ -19,6 +19,7 @@ contract Fundraiser is Ownable {
     string public description;
     address payable public beneficiary;
     uint256 public totalDonations;
+    uint256 public donationsCount;
 
     constructor(
         string memory _name,
@@ -51,6 +52,7 @@ contract Fundraiser is Ownable {
             });
         _donations[msg.sender].push(donation);
         totalDonations = totalDonations.add(msg.value);
+        donationsCount = donationsCount.add(1);
     }
 
     function myDonations() public view returns (
