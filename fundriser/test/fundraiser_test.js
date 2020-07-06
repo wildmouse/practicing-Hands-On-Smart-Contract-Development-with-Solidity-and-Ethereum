@@ -94,6 +94,18 @@ contract("Fundraiser", accounts => {
         "myDonationsCount should increment by 1"
       )
     })
-    it("includes donation in myDonations")
+    it("includes donation in myDonations", async () => {
+      await fundraiser.donate({ from: donor, value })
+      const { values, dates } = await fundraiser.myDonations(
+        { from: donor }
+      )
+
+      assert.equal(
+        value,
+        values[0],
+        "value should match"
+      )
+      assert(dates[0], "date should be present")
+    })
   })
 })
