@@ -75,4 +75,8 @@ contract Fundraiser is Ownable {
 
         return (values, dates);
     }
+
+    function withdraw() public onlyOwner {
+
+    }
 }

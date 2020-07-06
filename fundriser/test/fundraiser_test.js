@@ -139,4 +139,34 @@ contract("Fundraiser", accounts => {
       assert.equal(actualEvent, expectedEvent, "events should match");
     })
   })
+
+  describe("withdrawing funds", () => {
+    beforeEach(async () => {
+      await fundraiser.donate(
+        { from: accounts[2], value: web3.utils.toWei('0.1')}
+      )
+    })
+
+    describe("access controls", () => {
+      it("throws an error when called from a non-owner account", async () => {
+        try {
+          await fundraiser.withdraw({ from: accounts[3] });
+          assert.fail("withdraw was not restricted to owners")
+        } catch(err) {
+          const expectedError = "Ownable: caller is not the owner";
+          const actualError = err.reason;
+          assert.equal(actualError, expectedError, "should not be permitted");
+        }
+      })
+
+      it("permits the owner to call the function", async () => {
+        try {
+          await fundraiser.withdraw({ from: owner });
+          assert(true, "no errors were thrown");
+        } catch(err) {
+          assert.fail("should not have thrown an error");
+        }
+      })
+    })
+  })
 })
