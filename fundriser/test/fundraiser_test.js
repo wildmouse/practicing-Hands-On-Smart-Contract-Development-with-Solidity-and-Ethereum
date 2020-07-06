@@ -107,5 +107,18 @@ contract("Fundraiser", accounts => {
       )
       assert(dates[0], "date should be present")
     })
+    it("increases the totalDonations amount", async () => {
+      const currentTotalDonations = await fundraiser.totalDonations()
+      await fundraiser.donate({ from: donor, value })
+      const newTotalDonations = await fundraiser.totalDonations();
+
+      const diff = newTotalDonations - currentTotalDonations;
+
+      assert.equal(
+        diff,
+        value,
+        "difference should match the donation value"
+      )
+    })
   })
 })
