@@ -190,5 +190,17 @@ contract("Fundraiser", accounts => {
         "beneficiary should receive all the funds"
       )
     })
+
+    it("emits Withdraw event", async () => {
+      const tx = await fundraiser.withdraw({ from: owner });
+      const expectedEvent = "Withdraw";
+      const actualEvent = tx.logs[0].event;
+
+      assert.equal(
+        actualEvent,
+        expectedEvent,
+        "events should match"
+      )
+    })
   })
 })

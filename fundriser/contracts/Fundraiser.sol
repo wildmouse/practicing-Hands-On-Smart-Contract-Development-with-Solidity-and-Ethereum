@@ -14,6 +14,7 @@ contract Fundraiser is Ownable {
     mapping(address => Donation[]) private _donations;
 
     event DonationReceived(address indexed donor, uint256 value);
+    event Withdraw(uint256 amount);
 
     string public name;
     string public url;
@@ -79,5 +80,6 @@ contract Fundraiser is Ownable {
     function withdraw() public onlyOwner {
         uint256 balance = address(this).balance;
         beneficiary.transfer(balance);
+        emit Withdraw(balance);
     }
 }
