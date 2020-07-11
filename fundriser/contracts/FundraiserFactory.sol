@@ -14,9 +14,15 @@ contract FundraiserFactory {
     view
     returns (Fundraiser[] memory fundraisers)
     {
-        uint256 size = fundraisersCount() < limit ? fundraisersCount() : limit;
+        require(offset <= fundraisersCount(), "offset out of bounds");
+        uint256 size = fundraisersCount() - offset;
+        size = size < limit ? size : limit;
         size = size < maxLimit ? size : maxLimit;
         fundraisers = new Fundraiser[](size);
+
+        for (uint256 i = 0; i < size; i++) {
+            fundraisers[i] = _fundraisers[offset + i];
+        }
 
         return fundraisers;
     }

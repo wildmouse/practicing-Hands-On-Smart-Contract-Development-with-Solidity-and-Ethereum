@@ -1,4 +1,5 @@
 const FundraiserFactoryContract = artifacts.require("FundraiserFactory");
+const FundraiserContract = artifacts.require("Fundraiser");
 
 contract("FundraiserFactory: deployment", () => {
   it("has been deployed", async() => {
@@ -121,6 +122,57 @@ contract("FundraiserFactory: fundraisers", (accounts) => {
         20,
         "result size should be 20"
       )
+    })
+  })
+
+  describe("varying offset", () => {
+    let factory;
+    beforeEach(async () => {
+      factory = await createFundraiserFactory(10, accounts);
+    })
+
+    it("contains the fundraiser with the appropriate offset", async () => {
+      const fundraisers = await factory.fundraisers(1, 0);
+      const fundraiser = await FundraiserContract.at(fundraisers[0]);
+      const name = await fundraiser.name();
+      assert.ok(await name.includes(0), `${name} did not include the offset`);
+    })
+
+    it("contains the fundraiser with the appropriate offset", async () => {
+      const fundraisers = await factory.fundraisers(1, 7);
+      const fundraiser = await FundraiserContract.at(fundraisers[0]);
+      const name = await fundraiser.name();
+      assert.ok(await name.includes(7), `${name} did not include the offset`);
+    })
+  })
+
+  describe("boundary conditions", () => {
+    let factory;
+    beforeEach(async () => {
+      factory = await createFundraiserFactory(10, accounts);
+    })
+
+    it("raises out of bounds error", async () => {
+      try {
+        await factory.fundraisers(1, 11)
+        assert.fail("error was not raised")
+      } catch(err) {
+        const expected = "offset out of bounds"
+        assert.ok(err.message.includes(expected), `${err.message}`);
+      }
+    })
+
+    it("adjusts return size to prevent out of bounds error", async () => {
+      try {
+        const fundraisers = await factory.fundraisers(10, 5);
+        assert.equal(
+          fundraisers.length,
+          5,
+          "collection adjusted"
+        );
+      } catch(err) {
+        assert.fail("limit and offset exceeded bounds")
+      }
     })
   })
 })
