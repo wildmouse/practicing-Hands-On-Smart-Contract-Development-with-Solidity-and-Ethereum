@@ -5,7 +5,7 @@ import getWeb3 from "./getWeb3";
 import "./App.css";
 
 class App extends Component {
-  state = {greeting: '', web3: null, accounts: null, contract: null};
+  state = {greeting: '', newGreeting: '', web3: null, accounts: null, contract: null};
 
   componentDidMount = async () => {
     try {
@@ -43,6 +43,13 @@ class App extends Component {
     this.setState({ greeting: response });
   };
 
+  formSubmitHandler = async () => {
+    const { accounts, contract, newGreeting } = this.state
+    const updatedGreeting = await contract.methods.setGreeting(newGreeting).send({from: accounts[0]});
+  }
+
+  handleGreetingChange = (e) => this.setState({ newGreeting: e.target.value})
+
   render() {
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
@@ -52,6 +59,13 @@ class App extends Component {
         <h1>Greeter</h1>
 
         {this.state.greeting}
+        <form>
+          <label>
+            New Greeting
+          </label>
+          <input type="text" value={this.state.newGreeting} onChange={this.handleGreetingChange} />
+        </form>
+        <button onClick={this.formSubmitHandler}>Submit</button>
       </div>
     );
   }
